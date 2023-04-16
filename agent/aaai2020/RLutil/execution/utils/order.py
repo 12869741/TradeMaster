@@ -1,5 +1,5 @@
 from datetime import datetime
-from ctc_executioner.order_type import OrderType
+from agent.aaai2020.RLutil.execution.utils.order_type import OrderType
 
 
 class Order:
