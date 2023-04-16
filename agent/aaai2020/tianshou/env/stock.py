@@ -1,8 +1,9 @@
 import gym
 from env.OE.utils.orderbook import Orderbook
 from agent.aaai2020.RLutil.execution.utils.order_side import OrderSide
-
-import RLutil.execution
+import sys
+sys.path.append('/content/TradeMaster/agent/aaai2020/RLutil')
+import execution
 
 def create_stock_environment(stock_name, volume=-40000):
     if volume < 0:
