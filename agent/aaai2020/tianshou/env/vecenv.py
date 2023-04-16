@@ -106,7 +106,7 @@ class StockVectorEnv(BaseVectorEnv):
                 for index, e in enumerate(self.envs):
                     t = e.T[self.t_indexs[index]]
                     i = e.I[self.i_indexs[index]]
-                    obs.append(e._reset(t, i))
+                    obs.append(e.reset_(t, i))
                     if self.i_indexs[index] < len(e.I) - 1:
                         self.i_indexs[index] = self.i_indexs[index] + 1
                     else:
@@ -123,7 +123,7 @@ class StockVectorEnv(BaseVectorEnv):
                     e = self.envs[index]
                     t = e.T[self.t_indexs[index]]
                     i = e.I[self.i_indexs[index]]
-                    self._obs[index] = e._reset(t, i)
+                    self._obs[index] = e.reset_(t, i)
                     if self.i_indexs[index] < len(e.I) - 1:
                         self.i_indexs[index] = self.i_indexs[index] + 1
                     else:
@@ -138,7 +138,7 @@ class StockVectorEnv(BaseVectorEnv):
                 for index, e in enumerate(self.envs):
                     t = e.T[-1]
                     i = e.I[-1]
-                    obs.append(e._reset(t, i))
+                    obs.append(e.reset_(t, i))
                 self._obs = np.stack(obs)
             else:
                 if np.isscalar(id):
@@ -147,7 +147,7 @@ class StockVectorEnv(BaseVectorEnv):
                     e = self.envs[index]
                     t = e.T[-1]
                     i = e.I[-1]
-                    self._obs[index] = e._reset(t, i)
+                    self._obs[index] = e.reset_(t, i)
         return self._obs
 
     def step(self, action):
@@ -199,7 +199,7 @@ class StockVectorEnv_TwoActions(BaseVectorEnv):
                 for index, e in enumerate(self.envs):
                     t = e.T[self.t_indexs[index]]
                     i = e.I[self.i_indexs[index]]
-                    obs.append(e._reset(t, i))
+                    obs.append(e.reset_(t, i))
                     if self.i_indexs[index] < len(e.I) - 1:
                         self.i_indexs[index] = self.i_indexs[index] + 1
                     else:
@@ -216,7 +216,7 @@ class StockVectorEnv_TwoActions(BaseVectorEnv):
                     e = self.envs[index]
                     t = e.T[self.t_indexs[index]]
                     i = e.I[self.i_indexs[index]]
-                    self._obs[index] = e._reset(t, i)
+                    self._obs[index] = e.reset_(t, i)
                     if self.i_indexs[index] < len(e.I) - 1:
                         self.i_indexs[index] = self.i_indexs[index] + 1
                     else:
@@ -231,7 +231,7 @@ class StockVectorEnv_TwoActions(BaseVectorEnv):
                 for index, e in enumerate(self.envs):
                     t = e.T[-1]
                     i = e.I[-1]
-                    obs.append(e._reset(t, i))
+                    obs.append(e.reset_(t, i))
                 self._obs = np.stack(obs)
             else:
                 if np.isscalar(id):
@@ -240,7 +240,7 @@ class StockVectorEnv_TwoActions(BaseVectorEnv):
                     e = self.envs[index]
                     t = e.T[-1]
                     i = e.I[-1]
-                    self._obs[index] = e._reset(t, i)
+                    self._obs[index] = e.reset_(t, i)
         return self._obs
 
     def reset_stock(self, i, id=None):
@@ -248,7 +248,7 @@ class StockVectorEnv_TwoActions(BaseVectorEnv):
             obs = []
             for index, e in enumerate(self.envs):
                 t = e.T[-1]
-                obs.append(e._reset(t, i[index]))
+                obs.append(e.reset_(t, i[index]))
             self._obs = np.stack(obs)
         else:
             if np.isscalar(id):
@@ -257,12 +257,12 @@ class StockVectorEnv_TwoActions(BaseVectorEnv):
                 e = self.envs[index]
                 t = e.T[-1]
                 i = i[index]
-                self._obs[index] = e._reset(t, i)
+                self._obs[index] = e.reset_(t, i)
         return self._obs
 
     def step(self, action):
         assert len(action) == self.env_num
-        result = [e.step(int(a/len(e.levels)), a%len(e.levels)) for e, a in zip(self.envs, action)]
+        result = [e.step_(int(a/len(e.levels)), a%len(e.levels)) for e, a in zip(self.envs, action)]
         self._obs, self._rew, self._done, self._info = zip(*result)
         self._obs = np.stack(self._obs)
         self._rew = np.stack(self._rew)
