@@ -64,7 +64,7 @@ def get_args():
     parser.add_argument('--batch-size', type=int, default=64)
     parser.add_argument('--layer-num', type=int, default=3)
     parser.add_argument('--training-num', type=int, default=8)
-    parser.add_argument('--test-num', type=int, default=100)
+    parser.add_argument('--test-num', type=int, default=32)
     parser.add_argument('--logdir', type=str, default='log')
     parser.add_argument('--render', type=float, default=0.)
     parser.add_argument('--device',
@@ -113,7 +113,7 @@ def test_dqn(args=get_args()):
                                                 ReplayBuffer(args.buffer_size))
 
     test_collector = StockCollector_TwoActions(policy, test_envs)
-    # policy.set_eps(1)
+    #policy.set_eps(1)
     
     train_collector.collect(n_step=args.batch_size * 4)
     # print('train_collector')
@@ -153,7 +153,7 @@ def test_dqn(args=get_args()):
     if __name__ == '__main__':
         pprint.pprint(result)
         # Let's watch its performance!
-        env = create_stock_environment('{}_valid.csv'.format(args.task))
+        env = create_stock_environment('{}_test.csv'.format(args.task))
         collector = StockCollector_TwoActions(policy, env)
         result = collector.collect(n_episode=1, render=args.render)
         print(f'Final reward: {result["rew"]}, length: {result["len"]}')
