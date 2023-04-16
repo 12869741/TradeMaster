@@ -108,12 +108,16 @@ def test_dqn(args=get_args()):
         use_target_network=args.target_update_freq > 0,
         target_update_freq=args.target_update_freq)
     # collector
+
     train_collector = StockCollector_TwoActions(policy, train_envs,
                                                 ReplayBuffer(args.buffer_size))
+
     test_collector = StockCollector_TwoActions(policy, test_envs)
     # policy.set_eps(1)
+    
     train_collector.collect(n_step=args.batch_size * 4)
-    print(len(train_collector.buffer))
+    # print('train_collector')
+    # print(len(train_collector.buffer))
     # log
     writer = SummaryWriter(args.logdir + '/' + 'dqn')
 
