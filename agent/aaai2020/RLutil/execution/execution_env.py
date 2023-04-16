@@ -9,7 +9,7 @@ import sys
 
 sys.path.append("./")
 from agent.aaai2020.RLutil.execution.utils.action import Action
-from utils.action_state import ActionState
+from env.OE.utils.action_state import ActionState
 from agent.aaai2020.RLutil.execution.utils.order import Order
 from agent.aaai2020.RLutil.execution.utils.order_type import OrderType
 from agent.aaai2020.RLutil.execution.utils.order_side import OrderSide
