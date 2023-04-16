@@ -317,6 +317,7 @@ class StockCollector_TwoActions(object):
 
     def collect(self, n_step=0, n_episode=0, render=0):
         print(n_step)
+        print(n_episode)
         warning_count = 0
         if not self._multi_env:
             n_episode = np.sum(n_episode)
@@ -371,9 +372,9 @@ class StockCollector_TwoActions(object):
                     # print('self._cached_buf')
                     # print(self._cached_buf)
                     # print(self._multi_buf)
-                    # if self._cached_buf:
-                    #     warning_count += 1
-                    #     self._cached_buf[i].add(**data)
+                    if self._cached_buf:
+                        warning_count += 1
+                        self._cached_buf[i].add(**data)
                     if self._multi_buf:
                         warning_count += 1
                         self.buffer[i].add(**data)
@@ -409,8 +410,10 @@ class StockCollector_TwoActions(object):
                 if sum(self._done):
                     obs_next = self.env.reset(np.where(self._done)[0])
                 if n_episode != 0:
+                    print(np.sum(np.array(cur_episode)))
+                    print(np.sum(np.array(n_episode))*0.9)
                     if isinstance(n_episode, list) and \
-                            (cur_episode >= np.array(n_episode)).all() or \
+                            np.sum(np.array(cur_episode)) >= np.sum(np.array(n_episode))*0.9 or \
                             np.isscalar(n_episode) and \
                             cur_episode.sum() >= n_episode:
                         break
@@ -429,7 +432,7 @@ class StockCollector_TwoActions(object):
                     obs_next = self.env.reset()
                 if n_episode != 0 and cur_episode >= n_episode:
                     break
-            # print(cur_step)
+            print(cur_step)
             # print(warning_count)
             if n_step != 0 and cur_step >= n_step:
                 break
