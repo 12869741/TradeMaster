@@ -17,5 +17,6 @@ def create_stock_environment(stock_name, volume=-40000):
     max_price_level=10
     # max_price_level = int(int(round(orderbook.getState(0).tradePrice * 0.005, 2)/0.01)/10)*10
     env = gym.make("ctc-executioner-v1")
-    env._configure(orderbook, side=side, levels=(-max_price_level, 0, max_price_level/10), T=(0, 1800, 360), I=(0, volume, int(volume/10)), lookback=2 * 60 * 2)
+    
+    env.configure_(orderbook, side=side, levels=(-max_price_level, 0, max_price_level/10), T=(0, 1800, 360), I=(0, volume, int(volume/10)), lookback=2 * 60 * 2)
     return env
