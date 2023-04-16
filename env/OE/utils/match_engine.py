@@ -203,12 +203,13 @@ class MatchEngine(object):
                 if t_delta >= seconds:
                     logging.debug("Time delta consumed, stop matching.\n")
                     break
-
-            if order.getType() == OrderType.LIMIT:
+            # print(order.getType().value) 
+            # print(str(OrderType.LIMIT)) 
+            if str(order.getType().value)  == 'limit':
                 counterTrades = self.matchLimitOrder(order, orderbookState)
-            elif order.getType() == OrderType.MARKET:
+            elif str(order.getType().value)  == str(OrderType.MARKET):
                 counterTrades = self.matchMarketOrder(order, orderbookState)
-            elif order.getType() == OrderType.LIMIT_T_MARKET:
+            elif str(order.getType().value)  == str(OrderType.LIMIT_T_MARKET):
                 if seconds is None:
                     raise Exception(str(OrderType.LIMIT_T_MARKET) + ' requires a time limit.')
                 counterTrades = self.matchLimitOrder(order, orderbookState)
@@ -226,9 +227,10 @@ class MatchEngine(object):
             else:
                 logging.debug("No orders matched.\n")
             i = i + 1
-
+        # print(order.getType())
         # Execute remaining qty as market if LIMIT_T_MARKET
-        if remaining > 0.0 and (order.getType() == OrderType.LIMIT_T_MARKET or order.getType() == OrderType.MARKET):
+        if remaining > 0.0 and (str(order.getType().value) == str(OrderType.LIMIT_T_MARKET.value) or str(order.getType()) == str(OrderType.MARKET)):
+            # print('if')
             logging.debug('Execute remaining as MARKET order.')
             #i = i - 1  # back to previous state
             if not len(self.orderbook.getStates()) > i:
@@ -246,10 +248,11 @@ class MatchEngine(object):
                 remaining = remaining - counterTrade.getCty()
             order.setCty(remaining)
             logging.debug("Remaining: " + str(remaining) + "\n")
-
+        # print(remaining)
         logging.debug("Total number of trades: " + str(len(trades)))
         logging.debug("Remaining qty of order: " + str(remaining))
         logging.debug("Index at end of match period: " + str(i))
+        
         return trades, remaining, i
 
 
