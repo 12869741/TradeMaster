@@ -34,11 +34,11 @@ class ExecutionEnv_TwoActions(gym.Env):
         self.actionState = None
         self.execution = None
         self.episode = 0
-        self._configure()
+        self.configure_()
         self.done = False
         self.initOrderbookIndex = 0
 
-    def _generate_Sequence(self, min, max, step):
+    def generate_Sequence_(self, min, max, step):
         """ Generate sequence (that unlike xrange supports float)
 
         max: defines the sequence maximum
@@ -51,7 +51,7 @@ class ExecutionEnv_TwoActions(gym.Env):
             i = i + step
         return I
 
-    def _configure(self,
+    def configure_(self,
                    orderbook=None,
                    side=OrderSide.SELL,
                    levels=(-50, 50, 1),
@@ -63,12 +63,12 @@ class ExecutionEnv_TwoActions(gym.Env):
                    callbacks=[]):
         self.orderbook = orderbook
         self.side = side
-        self.levels = self._generate_Sequence(min=levels[0],
+        self.levels = self.generate_Sequence_(min=levels[0],
                                               max=levels[1],
                                               step=levels[2])
         self.action_space = spaces.Discrete(len(self.levels))
-        self.T = self._generate_Sequence(min=T[0], max=T[1], step=T[2])
-        self.I = self._generate_Sequence(min=I[0], max=I[1], step=I[2])
+        self.T = self.generate_Sequence_(min=T[0], max=T[1], step=T[2])
+        self.I = self.generate_Sequence_(min=I[0], max=I[1], step=I[2])
         self.lookback = lookback  # results in (bid|size, ask|size) -> 4*5
         self.bookSize = bookSize
         self.featureType = featureType
@@ -92,14 +92,14 @@ class ExecutionEnv_TwoActions(gym.Env):
         self.side = side
 
     def setLevels(self, min, max, step):
-        self.levels = self._generate_Sequence(min=min, max=max, step=step)
+        self.levels = self.generate_Sequence_(min=min, max=max, step=step)
         self.action_space = spaces.Discrete(len(self.levels))
 
     def setT(self, min, max, step):
-        self.T = self._generate_Sequence(min=min, max=max, step=step)
+        self.T = self.generate_Sequence_(min=min, max=max, step=step)
 
     def setI(self, min, max, step):
-        self.I = self._generate_Sequence(min=min, max=max, step=step)
+        self.I = self.generate_Sequence_(min=min, max=max, step=step)
 
     def setLookback(self, lookback):
         self.lookback = lookback
@@ -117,7 +117,7 @@ class ExecutionEnv_TwoActions(gym.Env):
                                                 shape=(2 * self.lookback,
                                                        self.bookSize, 2))
 
-    def _determine_next_inventory(self, execution):
+    def determine_next_inventory_(self, execution):
         qty_remaining = execution.getQtyNotExecuted()
         # TODO: Working with floats requires such an ugly threshold
         if qty_remaining > 0.0000001:
@@ -132,7 +132,7 @@ class ExecutionEnv_TwoActions(gym.Env):
         logging.info('Next inventory for execution: ' + str(i_next))
         return i_next
 
-    def _determine_next_time(self, t):
+    def determine_next_time_(self, t):
         if t > 0:
             t_next = self.T[self.T.index(t) - 1]
         else:
@@ -141,7 +141,7 @@ class ExecutionEnv_TwoActions(gym.Env):
         logging.info('Next timestep for execution: ' + str(t_next))
         return t_next
 
-    def _determine_runtime(self, t):
+    def determine_runtime_(self, t):
         if t != 0:
             T_index = self.T.index(t)
             runtime = self.T[T_index] - self.T[T_index - 1]
@@ -149,12 +149,12 @@ class ExecutionEnv_TwoActions(gym.Env):
             runtime = t
         return runtime
 
-    def _get_random_orderbook_state(self):
+    def get_random_orderbook_state_(self):
         return self.orderbook.getRandomStateInDay(runtime=max(self.T),
                                                   min_head=self.lookback)
 
-    def _create_execution(self, a, inventory):
-        runtime = self._determine_runtime(self.actionState.getT())
+    def create_execution_(self, a, inventory):
+        runtime = self.determine_runtime_(self.actionState.getT())
         orderbookState = self.orderbook.getState(self.orderbookIndex)
         self.totalOrderInventory = self.actionState.getI()
 
@@ -189,8 +189,8 @@ class ExecutionEnv_TwoActions(gym.Env):
         execution.setReferencePrice(orderbookState.getBestAsk())
         return execution
 
-    def _update_execution(self, execution, a, inventory):
-        runtime = self._determine_runtime(self.actionState.getT())
+    def update_execution_(self, execution, a, inventory):
+        runtime = self.determine_runtime_(self.actionState.getT())
         orderbookState = self.orderbook.getState(self.orderbookIndex)
 
         if runtime <= 0.0 or a is None:
@@ -225,7 +225,7 @@ class ExecutionEnv_TwoActions(gym.Env):
         execution.setOrderbookIndex(self.orderbookIndex)
         return execution
 
-    def _makeFeature(self, orderbookIndex, qty, reference_price):
+    def makeFeature_(self, orderbookIndex, qty, reference_price):
         if self.featureType == FeatureType.ORDERS:
             return self.orderbook.getBidAskFeatures(
                 state_index=orderbookIndex,
@@ -245,7 +245,8 @@ class ExecutionEnv_TwoActions(gym.Env):
                 norm_size=qty,
                 norm_price=state.getBidAskMid())
 
-    def step(self, action, inventory):
+    def step_(self, action, inventory):
+        # action, inventory = action_inventory
         self.episode += 1
         if action == 0:
             action = 'skip'
@@ -253,9 +254,9 @@ class ExecutionEnv_TwoActions(gym.Env):
             action = self.levels[action]
         self.episodeActions.append(action)
         if self.execution is None:
-            self.execution = self._create_execution(action, inventory)
+            self.execution = self.create_execution_(action, inventory)
         else:
-            self.execution = self._update_execution(self.execution, action,
+            self.execution = self.update_execution_(self.execution, action,
                                                     inventory)
 
         logging.info('Created/Updated execution.' + '\nAction: ' +
@@ -266,10 +267,10 @@ class ExecutionEnv_TwoActions(gym.Env):
                      str(self.actionState.getI()))
         self.execution, counterTrades = self.execution.run(self.orderbook)
 
-        i_next = self._determine_next_inventory(self.execution)
-        t_next = self._determine_next_time(self.execution.getState().getT())
+        i_next = self.determine_next_inventory_(self.execution)
+        t_next = self.determine_next_time_(self.execution.getState().getT())
 
-        feature = self._makeFeature(
+        feature = self.makeFeature_(
             orderbookIndex=self.execution.getOrderbookIndex(),
             qty=i_next,
             reference_price=self.execution.getReferencePrice())
@@ -305,11 +306,11 @@ class ExecutionEnv_TwoActions(gym.Env):
         return state_next.toArray(), reward, done, {}
 
     def reset(self):
-        return self._reset(t=self.T[-1], i=self.I[-1])
+        return self.reset_(t=self.T[-1], i=self.I[-1])
 
-    def _reset(self, t, i):
-        orderbookState, orderbookIndex = self._get_random_orderbook_state()
-        feature = self._makeFeature(
+    def reset_(self, t, i):
+        orderbookState, orderbookIndex = self.get_random_orderbook_state_()
+        feature = self.makeFeature_(
             orderbookIndex=orderbookIndex,
             qty=i,
             reference_price=orderbookState.getBestAsk())
