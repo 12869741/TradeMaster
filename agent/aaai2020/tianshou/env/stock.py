@@ -1,6 +1,6 @@
 import gym
-from RLutil.execution.utils.orderbook import Orderbook
-from RLutil.execution.utils.order_side import OrderSide
+from env.OE.utils.orderbook import Orderbook
+from agent.aaai2020.RLutil.execution.utils.order_side import OrderSide
 
 import RLutil.execution
 
