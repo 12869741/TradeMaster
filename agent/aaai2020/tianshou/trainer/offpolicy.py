@@ -3,6 +3,8 @@ import tqdm
 import torch
 from tianshou.utils import tqdm_config, MovAvg
 from tianshou.trainer import test_episode, gather_info
+import os
+
 
 
 def offpolicy_trainer(policy, train_collector, test_collector, max_epoch,
@@ -13,6 +15,11 @@ def offpolicy_trainer(policy, train_collector, test_collector, max_epoch,
     best_epoch, best_reward = -1, -1
     stat = {}
     start_time = time.time()
+
+    model_dir = "models"
+    if not os.path.exists(model_dir):
+        os.makedirs(model_dir)
+
     for epoch in range(1, 1 + max_epoch):
         # train
         policy.train()
@@ -63,7 +70,9 @@ def offpolicy_trainer(policy, train_collector, test_collector, max_epoch,
             if t.n <= t.total:
                 t.update()
         # test
-        torch.save(policy.state_dict(), 'dqn_twoactions_sell_skip_{}.pth'.format(task[-6:]))
+        # torch.save(policy.state_dict(), 'dqn_twoactions_sell_skip_{}.pth'.format(task[-6:]))
+        print(task)
+        torch.save(policy.state_dict(), os.path.join(model_dir, 'dqn_twoactions_sell_skip_{}.pth'.format(epoch)))
         result = test_episode(
             policy, test_collector, test_fn, epoch, episode_per_test)
         if best_epoch == -1 or best_reward < result['rew']:
