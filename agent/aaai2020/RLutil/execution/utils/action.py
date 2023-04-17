@@ -1,7 +1,7 @@
 import copy
 from agent.aaai2020.RLutil.execution.utils.order_side import OrderSide
 from agent.aaai2020.RLutil.execution.utils.order_type import OrderType
-from env.OE.utils.match_engine import MatchEngine
+from agent.aaai2020.RLutil.execution.utils.match_engine import MatchEngine
 import numpy as np
 
 class Action(object):
