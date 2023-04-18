@@ -153,8 +153,13 @@ def test_dqn(args=get_args()):
     if __name__ == '__main__':
         pprint.pprint(result)
         # Let's watch its performance!
-        env = create_stock_environment('{}_test.csv'.format(args.task))
-        collector = StockCollector_TwoActions(policy, env)
+        # env = create_stock_environment('{}_test.csv'.format(args.task))
+        test_envs = StockVectorEnv_TwoActions([
+        lambda: create_stock_environment('{}_test.csv'.format(args.task))
+        for _ in range(args.test_num)
+    ],
+                                          mode='test')
+        collector = StockCollector_TwoActions(policy, test_envs)
         result = collector.collect(n_episode=1, render=args.render)
         print(f'Final reward: {result["rew"]}, length: {result["len"]}')
         collector.close()
