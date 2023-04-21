@@ -14,5 +14,5 @@ __all__ = [
     'RayVectorEnv',
     'CloudpickleWrapper',
     'StockVectorEnv',
-    'StockVectorEnv',
+    'StockVectorEnv_TwoActions',
 ]
