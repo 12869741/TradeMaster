@@ -58,7 +58,7 @@ def get_args():
     parser.add_argument('--gamma', type=float, default=1.0)
     parser.add_argument('--n-step', type=int, default=1)
     parser.add_argument('--target-update-freq', type=int, default=320)
-    parser.add_argument('--epoch', type=int, default=1)
+    parser.add_argument('--epoch', type=int, default=3)
     parser.add_argument('--step-per-epoch', type=int, default=1000)
     parser.add_argument('--collect-per-step', type=int, default=20)
     parser.add_argument('--batch-size', type=int, default=64)
@@ -160,7 +160,7 @@ def test_dqn(args=get_args()):
     ],
                                           mode='test')
         collector = StockCollector_TwoActions(policy, test_envs)
-        result = collector.collect(n_episode=1, render=args.render)
+        result = collector.collect(n_episode=32, render=args.render)
         print(f'Final reward: {result["rew"]}, length: {result["len"]}')
         collector.close()
 
