@@ -188,7 +188,8 @@ class Orderbook(object):
 
     def getState(self, index):
         if len(self.states) <= index:
-            raise Exception('Index out of orderbook state.')
+            return self.states[-1]
+#             raise Exception('Index out of orderbook state.')
         return self.states[index]
 
     def getDictState(self, index):
