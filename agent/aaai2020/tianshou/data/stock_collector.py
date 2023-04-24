@@ -411,9 +411,9 @@ class StockCollector_TwoActions(object):
                     obs_next = self.env.reset(np.where(self._done)[0])
                 if n_episode != 0:
                     print(np.sum(np.array(cur_episode)))
-                    print(np.sum(np.array(n_episode))*0.9)
+                    print(np.sum(np.array(n_episode)))
                     if isinstance(n_episode, list) and \
-                            np.sum(np.array(cur_episode)) >= np.sum(np.array(n_episode))*0.9 or \
+                            np.sum(np.array(cur_episode)) >= np.sum(np.array(n_episode)) or \
                             np.isscalar(n_episode) and \
                             cur_episode.sum() >= n_episode:
                         break
