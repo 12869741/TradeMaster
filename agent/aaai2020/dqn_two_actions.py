@@ -160,7 +160,7 @@ def test_dqn(args=get_args()):
     ],
                                           mode='test')
         collector = StockCollector_TwoActions(policy, test_envs)
-        result = collector.collect(n_episode=32, render=args.render)
+        result = collector.collect(n_episode=100, render=args.render)
         print(f'Final reward: {result["rew"]}, length: {result["len"]}')
         collector.close()
 
